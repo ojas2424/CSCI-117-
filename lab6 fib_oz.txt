@@ -1,0 +1,52 @@
+// Haskell version of fib:
+//    fib :: Int -> Int
+//    fib 0 = 1
+//    fib 1 = 1
+//    fib x = fib (x-1) + fib (x-2)
+//
+// Rewrite fib in Oz kernel syntax using the template below, including
+// a "skip stack" command added to the first base case, using the 
+// primitive operations {Eq X Y B}, {IntMinus X Y A}, and {IntPlus X Y A}.
+// 
+// Run through the Oz interpreter by calling
+//    runFull "declarative" "fib_oz.txt" "fib_oz.out"
+// after ghci fib_oz.txt and give a brief explanation of each of the stack outputs.
+
+local Fib Zero One Two X Result in
+  Zero = 0
+  One = 1
+  Two = 2
+  Fib = proc {$ In Out}
+    local B1 B2 in
+      {Eq In Zero B1}
+      {Eq In One B2}
+      if B1 then 
+      	Out = 1
+      else 
+        if B2 then
+          Out = 1
+          skip Stack
+        else
+          local X1 X2 Out1 Out2 in
+            {IntMinus In One X1}
+            {IntMinus In Two X2}
+            {Fib X1 Out1}
+            {Fib X2 Out2}
+            {IntPlus Out1 Out2 Out}
+          end
+        end
+      end
+    end
+  end
+  X = 4
+  {Fib X Result}
+  skip Browse Result
+end
+//*Hoz> runFull "declarative" "fib_oz.txt" "fib_oz.out"
+//Stack : "local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Out2,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = Out1,EXU2 = Out2,EXU3 = Out,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Out2,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = Out1,EXU2 = Out2,EXU3 = Out,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Out2,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = Out1,EXU2 = Out2,EXU3 = Out,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]skip/BResult"
+
+//Stack : "local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = Out1,EXU2 = Out2,EXU3 = Out,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Out2,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = Out1,EXU2 = Out2,EXU3 = Out,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]skip/BResult"
+
+//Stack : "local [\"EXU1\",\"EXU2\"] [EXU1 = X2,EXU2 = Out2,\"Fib\" \"EXU1\" \"EXU2\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = Out1,EXU2 = Out2,EXU3 = Out,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]local [\"EXU1\",\"EXU2\",\"EXU3\"] [EXU1 = Out1,EXU2 = Out2,EXU3 = Out,\"IntPlus\" \"EXU1\" \"EXU2\" \"EXU3\"]skip/BResult"
+
+//Result : 5

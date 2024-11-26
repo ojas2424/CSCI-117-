@@ -1,0 +1,15 @@
+// Append with difference lists
+local T1 T2 L1N L2N D1 D2 D1a D2a LNew in
+	
+	L1N = ((1|(2|T1))#T1)
+	L2N = ((3|(4|T2))#T2)
+	
+	L2N = (D1#D2)
+	L1N = (D1a#D2a)
+	T1 = D1
+
+	LNew = (D1a#D2)
+	
+	skip Browse LNew
+	skip Full
+end
